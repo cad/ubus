@@ -23,6 +23,7 @@ class BusLogger():
         for middleware_class, config in self.__CONFIG['middlewares']:
             middleware = middleware_class(config)
             self.__MIDDLEWARES.append(middleware)
+            print "Middleware {} ready..".format(middleware)
 
     def __tear_down(self):
         pass
@@ -48,17 +49,20 @@ class BusLogger():
         reactor.run()
 
 
-
-
 if __name__ == '__main__':
     from inlet.udp import MulticastUDPInlet
+    from inlet.pcap import PCAPInlet
     from outlet.stdout import STDOUTOutlet
+    from middleware.canethernet import CANEthernetMiddleware
 
     config = {
         'inlets': [
             (MulticastUDPInlet, {
                 'host': '239.255.60.60',
                 'port': 4876,
+            }),
+            (PCAPInlet, {
+                'filepath': 'data/sample.pcap',
             })
         ],
         'outlets': [
@@ -67,6 +71,7 @@ if __name__ == '__main__':
             })
         ],
         'middlewares': [
+            (CANEthernetMiddleware, {})
         ],
 
     }

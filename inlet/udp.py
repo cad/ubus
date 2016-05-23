@@ -25,6 +25,7 @@ class MulticastUDP(DatagramProtocol):
 
 class MulticastUDPInlet(BaseInlet):
     def start(self):
+        print "UDP inlet started..."
         self.__protocol = MulticastUDP()
         self.__protocol.set_upstream_handler(self.send_message)
         self.__protocol.set_multicast_group(self.config['host'])
@@ -35,7 +36,6 @@ class MulticastUDPInlet(BaseInlet):
             self.__protocol,
             listenMultiple=True
         )
-        print "UDP inlet started..."
 
     def stop(self):
         self.__interface.stopListening()
