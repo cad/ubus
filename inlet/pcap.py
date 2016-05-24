@@ -1,12 +1,13 @@
 import dpkt
 import traceback
 import sys
+from twisted.python import log
 from inlet import BaseInlet
 
 
 class PCAPInlet(BaseInlet):
     def start(self):
-        print "PCAP inlet started..."
+        log.msg("PCAP inlet started...")
         self.__pcap_file = open(self.config['filepath'])
         self.__pcap_reader = dpkt.pcap.Reader(self.__pcap_file)
 
@@ -25,4 +26,4 @@ class PCAPInlet(BaseInlet):
 
     def stop(self):
         self.__interface.stopListening()
-        print "PCAP inlet stopped..."
+        log.msg("PCAP inlet stopped...")

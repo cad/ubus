@@ -1,5 +1,6 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
+from twisted.python import log
 from inlet import BaseInlet
 
 
@@ -25,7 +26,7 @@ class MulticastUDP(DatagramProtocol):
 
 class MulticastUDPInlet(BaseInlet):
     def start(self):
-        print "UDP inlet started..."
+        log.msg("UDP inlet started...")
         self.__protocol = MulticastUDP()
         self.__protocol.set_upstream_handler(self.send_message)
         self.__protocol.set_multicast_group(self.config['host'])
@@ -39,4 +40,4 @@ class MulticastUDPInlet(BaseInlet):
 
     def stop(self):
         self.__interface.stopListening()
-        print "UDP inlet stopped..."
+        log.msg("UDP inlet stopped...")

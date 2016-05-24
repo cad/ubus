@@ -1,4 +1,5 @@
 from twisted.internet import reactor
+from twisted.python import log
 
 
 class BusLogger():
@@ -23,7 +24,7 @@ class BusLogger():
         for middleware_class, config in self.__CONFIG['middlewares']:
             middleware = middleware_class(config)
             self.__MIDDLEWARES.append(middleware)
-            print "Middleware {} ready..".format(middleware)
+            log.msg("Middleware ready: {}".format(middleware))
 
     def __tear_down(self):
         pass
@@ -50,6 +51,7 @@ class BusLogger():
 
 
 if __name__ == '__main__':
+    import sys
     from inlet.udp import MulticastUDPInlet
     from inlet.pcap import PCAPInlet
     from outlet.stdout import STDOUTOutlet
@@ -76,4 +78,5 @@ if __name__ == '__main__':
 
     }
     logger = BusLogger(config)
+    log.startLogging(sys.stdout)
     logger.run()
