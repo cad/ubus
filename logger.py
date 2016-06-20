@@ -44,9 +44,9 @@ class BusLogger():
 
     def run(self):
         for outlet in self.__OUTLETS:
-            outlet.start()
+            reactor.callFromThread(outlet.start)
         for inlet in self.__INLETS:
-            inlet.start()
+            reactor.callFromThread(inlet.start)
         reactor.run()
 
 
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     from inlet.udp import MulticastUDPInlet
     from inlet.pcap import PCAPInlet
     from outlet.stdout import STDOUTOutlet
+    from outlet.websocket import WebSocketOutlet
     from middleware.canethernet import CANEthernetMiddleware
 
     config = {
@@ -68,9 +69,13 @@ if __name__ == '__main__':
             })
         ],
         'outlets': [
+            (WebSocketOutlet, {
+                'port': 9000
+            }),
             (STDOUTOutlet, {
 
-            })
+            }),
+
         ],
         'middlewares': [
             (CANEthernetMiddleware, {})

@@ -4,5 +4,8 @@ from protocol import Ra27CANProtocolParser
 
 class CANEthernetMiddleware(BaseMiddleware):
     def apply(self, message):
-        message = Ra27CANProtocolParser(message).parse()
+        try:
+            message = Ra27CANProtocolParser(message).parse()
+        except Exception as e:
+            print e
         return message

@@ -1,4 +1,5 @@
 from twisted.python import log
+from twisted.internet import reactor
 from outlet import BaseOutlet
 
 
@@ -10,4 +11,4 @@ class STDOUTOutlet(BaseOutlet):
         log.msg("STDOUT outlet stopped...")
 
     def send_message(self, message):
-        log.msg(message)
+        reactor.callInThread(log.msg, message)
