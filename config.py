@@ -19,7 +19,7 @@ CONFIG = {
         }),
         # (PCAPInlet, {
         #     'filepath': 'data/sample.pcap',
-        #     'postproccessors': [(CANEthernetMiddleware, {})]
+        #     'middlewares': [(CANEthernetMiddleware, {})]
         # })
     ],
     'outlets': [
