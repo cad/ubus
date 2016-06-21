@@ -36,7 +36,7 @@ class BusLogger():
 
     def __fan_out(self, message):
         for outlet in self.__OUTLETS:
-            outlet.send_message(message)
+            outlet.send_message(outlet.apply_middlewares(message))
 
     def __inlet_handler(self, message):
         message = self.__apply_middlewares(message)
@@ -54,8 +54,10 @@ if __name__ == '__main__':
     import sys
     from inlet.udp import MulticastUDPInlet
     from inlet.pcap import PCAPInlet
+    from inlet.websocket import WebSocketInlet
     from outlet.stdout import STDOUTOutlet
     from outlet.websocket import WebSocketOutlet
+    from middleware.json import JSONDecodeMiddleware, JSONEncodeMiddleware
     from middleware.canethernet import CANEthernetMiddleware
 
     config = {
@@ -63,22 +65,29 @@ if __name__ == '__main__':
             (MulticastUDPInlet, {
                 'host': '239.255.60.60',
                 'port': 4876,
+                'middlewares': [(CANEthernetMiddleware, {})]
             }),
-            (PCAPInlet, {
-                'filepath': 'data/sample.pcap',
-            })
+            (WebSocketInlet, {
+                'port': 9001,
+                'middlewares': [(JSONDecodeMiddleware, {})]
+            }),
+            # (PCAPInlet, {
+            #     'filepath': 'data/sample.pcap',
+            #     'postproccessors': [(CANEthernetMiddleware, {})]
+            # })
         ],
         'outlets': [
             (WebSocketOutlet, {
-                'port': 9000
+                'port': 9000,
+                'middlewares': [(JSONEncodeMiddleware, {})]
             }),
             (STDOUTOutlet, {
-
+                'middlewares': []
             }),
 
         ],
         'middlewares': [
-            (CANEthernetMiddleware, {})
+            # (CANEthernetMiddleware, {})
         ],
 
     }
