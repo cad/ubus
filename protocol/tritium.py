@@ -1,7 +1,6 @@
 from binascii import hexlify, unhexlify
 from construct import *
 
-
 Char = SLInt8
 UChar = ULInt8
 Short = SLInt16
@@ -134,24 +133,24 @@ CAN_TRITIUM_0E_ESC_ODOMETER_AND_BUS_AMPHOURS_MEASUREMENT = Struct(
 CAN_TRITIUM_01_CMU_INFO = Struct(
     "cmu_info",
     ULong("serial_number"),
-    UBInt16("pcb_temperature"),
-    UBInt16("cell_temperature"),
+    UNInt16("pcb_temperature"),
+    UNInt16("cell_temperature"),
 )
 
 CAN_TRITIUM_02_CMU_MEASUREMENT_FIRST_PAGE = Struct(
     "cmu_measurement_first_page",
-    UBInt16("cell_0_voltage"),
-    UBInt16("cell_1_voltage"),
-    UBInt16("cell_2_voltage"),
-    UBInt16("cell_3_voltage"),
+    UNInt16("cell_0_voltage"),
+    UNInt16("cell_1_voltage"),
+    UNInt16("cell_2_voltage"),
+    UNInt16("cell_3_voltage"),
 )
 
 CAN_TRITIUM_03_CMU_MEASUREMENT_SECOND_PAGE = Struct(
     "cmu_measurement_second_page",
-    UBInt16("cell_4_voltage"),
-    UBInt16("cell_5_voltage"),
-    UBInt16("cell_6_voltage"),
-    UBInt16("cell_7_voltage"),
+    UNInt16("cell_4_voltage"),
+    UNInt16("cell_5_voltage"),
+    UNInt16("cell_6_voltage"),
+    UNInt16("cell_7_voltage"),
 )
 
 CAN_TRITIUM_F4_BMU_PACK_STATE_OF_CHARGE = Struct(
@@ -168,17 +167,17 @@ CAN_TRITIUM_F5_BMU_PACK_BALANCE_STATE_OF_CHARGE = Struct(
 
 CAN_TRITIUM_F6_BMU_CHARGER_CONTROL_INFORMATION = Struct(
     "bmu_charger_control_information",
-    UBInt16("charging_cell_voltage_error"),
-    UBInt16("cell_temperature_margin"),
-    UBInt16("discharging_cell_voltage_error"),
-    UBInt16("total_pack_capacity"),
+    UNInt16("charging_cell_voltage_error"),
+    UNInt16("cell_temperature_margin"),
+    UNInt16("discharging_cell_voltage_error"),
+    UNInt16("total_pack_capacity"),
 )
 
 CAN_TRITIUM_F7_BMU_PRECHARGE_STATUS = Struct(
     "bmu_precharge_status",
     UChar("contactor_driver_status"),
     UChar("precharge_state"),
-    UBInt16("12v_contactor_supply_voltage"),
+    UNInt16("12v_contactor_supply_voltage"),
     Padding(2),
     UChar("precharge_timer_elapsed"),
     UChar("precharge_timer_counter"),
@@ -186,18 +185,18 @@ CAN_TRITIUM_F7_BMU_PRECHARGE_STATUS = Struct(
 
 CAN_TRITIUM_F8_BMU_MIN_MAX_CELL_VOLTAGE = Struct(
     "bmu_minimum_maximum_cell_voltage",
-    UBInt16("min_cell_voltage"),
-    UBInt16("max_cell_voltage"),
-    UChar("min_voltage_cell"),
+    UNInt16("min_cell_voltage"),
+    UNInt16("max_cell_voltage"),
     UChar("min_voltage_cmu"),
-    UChar("max_voltage_cell"),
+    UChar("min_voltage_cell"),
     UChar("max_voltage_cmu"),
+    UChar("max_voltage_cell"),
 )
 
 CAN_TRITIUM_F9_BMU_MIN_MAX_CELL_TEMPERATURE = Struct(
     "bmu_minimum_maximum_cell_temperature",
-    UBInt16("min_cell_temperature"),
-    UBInt16("max_cell_temperature"),
+    UNInt16("min_cell_temperature"),
+    UNInt16("max_cell_temperature"),
     UChar("min_temperature_cell"),
     Padding(1),
     UChar("max_temperature_cell"),
@@ -213,19 +212,19 @@ CAN_TRITIUM_FA_BMU_BATTERY_PACK_VOLTAGE_CURRENT = Struct(
 
 CAN_TRITIUM_FB_BMU_BATTERY_PACK_STATUS = Struct(
     "bmu_battery_pack_status",
-    UBInt16("balance_voltage_treshold_falling"),
-    UBInt16("balance_voltage_treshold_rising"),
+    UNInt16("balance_voltage_treshold_falling"),
+    UNInt16("balance_voltage_treshold_rising"),
     UChar("status"),
     UChar("cmu_count"),
-    UBInt16("bmu_firmware"),
+    UNInt16("bmu_firmware"),
 )
 
 CAN_TRITIUM_FC_BMU_BATTERY_PACK_FAN_STATUS = Struct(
     "bmu_battery_pack_fan_status",
-    UBInt16("fan_speed2"),
-    UBInt16("fan_speed1"),
-    UBInt16("fans_and_contactors_12v_current_consumption"),
-    UBInt16("cmu_12v_current_consumption"),
+    UNInt16("fan_speed2"),
+    UNInt16("fan_speed1"),
+    UNInt16("fans_and_contactors_12v_current_consumption"),
+    UNInt16("cmu_12v_current_consumption"),
 )
 
 CAN_TRITIUM_FD_BMU_EXTENDED_BATTERY_PACK_STATUS = Struct(

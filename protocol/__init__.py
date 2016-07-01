@@ -1,12 +1,14 @@
+from twisted.python import log
 from protocol import tritium
 from construct import *
 
 
 class Ra27CANProtocolParser():
-    LEFT_ESC_BASE_ADDRESS = 0x420  # default 0x400
+    LEFT_ESC_BASE_ADDRESS = 0x400  # default 0x400
     RIGHT_ESC_BASE_ADDRESS = 0x440
     BMU_BASE_ADDRESS = 0x600
     CMU_BASE_ADDRESSES = (0x00, 0x03, 0x06, 0x09)
+    CMU_MESSAGE_RANGE = 3
 
     def __init__(self, packet):
         self.packet = packet
@@ -19,12 +21,12 @@ class Ra27CANProtocolParser():
                          .parse(self.packet)
         can_id = int(payload.can_id_hex, 16)
 
-        if self.RIGHT_ESC_BASE_ADDRESS & can_id == self.RIGHT_ESC_BASE_ADDRESS:
+        if self.BMU_BASE_ADDRESS <= can_id and (self.BMU_BASE_ADDRESS + 0x100) > can_id:
+            return self.__parse_bms(payload)
+        elif (self.RIGHT_ESC_BASE_ADDRESS <= can_id) and ((self.RIGHT_ESC_BASE_ADDRESS + 0x20) > can_id):
             return self.__parse_right_esc(payload)
-        elif self.LEFT_ESC_BASE_ADDRESS & can_id == self.LEFT_ESC_BASE_ADDRESS:
+        elif (self.LEFT_ESC_BASE_ADDRESS <= can_id) and ((self.LEFT_ESC_BASE_ADDRESS + 0x20) > can_id):
             return self.__parse_left_esc(payload)
-        elif self.BMU_BASE_ADDRESS & can_id == self.BMU_BASE_ADDRESS:
-            return self.__parse_bmu(payload)
         else:
             return self.__parse_unknown(payload)
 
@@ -64,10 +66,13 @@ class Ra27CANProtocolParser():
         payload['data'] = data
         return payload
 
-    def __parse_bmu(self, payload):
+    def __parse_bms(self, payload):
+        base_address = self.BMU_BASE_ADDRESS
         can_id = int(payload.can_id_hex, 16)
-        if can_id - self.BMU_BASE_ADDRESS in self.CMU_BASE_ADDRESSES:
-            return self.__parse_cmu(payload)
+
+        for cmu_base_id in self.CMU_BASE_ADDRESSES:
+            if (can_id - self.BMU_BASE_ADDRESS) >= cmu_base_id and (can_id - self.BMU_BASE_ADDRESS) <= cmu_base_id + self.CMU_MESSAGE_RANGE:
+                return self.__parse_cmu(payload)
 
         data = Struct(
             "data",
@@ -93,22 +98,27 @@ class Ra27CANProtocolParser():
         return payload
 
     def __parse_cmu(self, payload):
+        def get_base_id(can_id):
+            for cmu_base_id in self.CMU_BASE_ADDRESSES:
+                if (can_id - self.BMU_BASE_ADDRESS) >= cmu_base_id and (can_id - self.BMU_BASE_ADDRESS) <= cmu_base_id + self.CMU_MESSAGE_RANGE:
+                    return cmu_base_id
+
         can_id = int(payload.can_id_hex, 16)
+        base_id = get_base_id(can_id)
         cmu_protocol = {}
         for cmu_base_id in self.CMU_BASE_ADDRESSES:
-            cmu_protocol.append(
+            cmu_protocol.update(
                 {
-                    cmu_base_id + 0x01: tritium.CAN_TRITIUM_01_CMU_INFO,
-                    cmu_base_id + 0x02: tritium.CAN_TRITIUM_02_CMU_MEASUREMENT_FIRST_PAGE,
-                    cmu_base_id + 0x03: tritium.CAN_TRITIUM_03_CMU_MEASUREMENT_SECOND_PAGE,
+                    0x01: tritium.CAN_TRITIUM_01_CMU_INFO,
+                    0x02: tritium.CAN_TRITIUM_02_CMU_MEASUREMENT_FIRST_PAGE,
+                    0x03: tritium.CAN_TRITIUM_03_CMU_MEASUREMENT_SECOND_PAGE,
                 }
             )
-
         data = Struct(
             "data",
             Switch(
-                "cmu_{}".format(hex(base_address)),
-                lambda ctx: (can_id - base_address),
+                "cmu_{}".format(base_id / 3),
+                lambda ctx: (can_id - (self.BMU_BASE_ADDRESS + base_id)),
                 cmu_protocol,
                 default=StaticField("unknown", 8),
             )
@@ -116,6 +126,9 @@ class Ra27CANProtocolParser():
         payload['data'] = data
         return payload
 
-
     def __parse_unknown(self, payload):
-        return payload
+        class Message:
+            pass
+        message = Message()
+        message.data = payload
+        return message
