@@ -43,6 +43,12 @@ CAN_TRITIUM_ETHERNET_BRIDGE_PROTOCOL = Struct(
     StaticField("data", 8)
 )
 
+CAN_TRITIUM_00_BRIDGE_HEART_BEAT = Struct(
+    "bridge_heart_beat",
+    UNInt16("bitrate"),
+    Bytes("mac", 48)
+)
+
 CAN_TRITIUM_00_ESC_IDENTIFICATION_INFORMATION = Struct(
     "identification_information",
     UBInt32("serial_number"),
