@@ -8,15 +8,20 @@ class MulticastUDP(DatagramProtocol):
     def set_upstream_handler(self, handler):
         self.handler = handler
 
-    def set_multicast_group(self, group):
+    def set_multicast_group(self, group, interface_ip=None):
         self.multicast_group = group
+        self.interface_ip = interface_ip
 
     def startProtocol(self):
         """
         Called after protocol has started listening.
         """
         self.transport.setTTL(5)
-        self.transport.joinGroup(self.multicast_group)
+
+        if self.interface_ip:
+            self.transport.joinGroup(self.multicast_group, self.interface_ip)
+        else:
+            self.transport.joinGroup(self.multicast_group)
 
     def datagramReceived(self, data, (host, port)):
         self.handler(data)
@@ -29,7 +34,11 @@ class MulticastUDPInlet(BaseInlet):
         log.msg("UDP inlet started...")
         self.__protocol = MulticastUDP()
         self.__protocol.set_upstream_handler(self.send_message)
-        self.__protocol.set_multicast_group(self.config['host'])
+        if self.config.get("interface_ip"):
+            self.__protocol.set_multicast_group(self.config['host'],
+                                                self.config['interface_ip'])
+        else:
+            self.__protocol.set_multicast_group(self.config['host'])
 
         self.__interface = None
         self.__interface = reactor.listenMulticast(

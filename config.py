@@ -9,8 +9,11 @@ from middleware.canethernet import CANEthernetMiddleware
 CONFIG = {
     'inlets': [
         (MulticastUDPInlet, {
-            'host': '239.255.60.60',
+            'host': '239.255.60.60',  # multicast group address
             'port': 4876,
+            'interface_ip': "",  # Set this to ip of the **INTERFACE** which should
+                                 # listen for mutlicast traffic. If it doesn't join to
+                                 # the multicast group autmatically.
             'middlewares': [(CANEthernetMiddleware, {})]
         }),
         (WebSocketInlet, {
