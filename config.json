@@ -1,0 +1,62 @@
+{
+    "inlets": [
+        {
+            "type": "MulticastUDP",
+            "config": {
+                "address": "239.255.60.60:4876"
+            },
+            "preproccessors": [
+                {
+                    "type": "JSONDecode",
+                    "config": {}
+                }
+
+            ],
+            "protocol": {}
+        },
+        {
+            "type": "Websocket",
+            "config": {
+                "address": "0.0.0.0:9001"
+            },
+            "preproccessors": [
+                {
+                    "type": "JSONDecode",
+                    "config": {}
+                }
+            ]
+        },
+        {
+            "type": "PCAP",
+            "config": {
+                "file_path": "data/sample.pcap"
+            },
+            "preproccessors": [
+            ],
+            "protocol": {
+                "type": "TritiumCANEthernet",
+                "config": {
+                    "left_esc_base_address": "0x400",
+                    "right_esc_base_address": "0x400",
+                    "bmu_base_address": "0x600",
+                    "cmu_base_addresses": "0x00,0x03,0x06,0x09",
+                    "cmu_message_range": "3"
+                }
+            }
+        }
+    ],
+    "outlets": [
+        {
+            "type": "STDOUT",
+            "config": {},
+            "preproccessors": []
+        },
+        {
+            "type": "Websocket",
+            "config": {
+                "address": "0.0.0.0:9000"
+            },
+            "preproccessors": []
+        }
+    ]
+}

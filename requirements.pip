@@ -1,9 +1,0 @@
-Twisted==16.2.0
-autobahn==0.14.1
-construct==2.5.2
-dpkt==1.8.7
-simplejson==3.8.2
-six==1.10.0
-txaio==2.5.1
-wsgiref==0.1.2
-zope.interface==4.2.0
