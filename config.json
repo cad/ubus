@@ -5,14 +5,17 @@
             "config": {
                 "address": "239.255.60.60:4876"
             },
-            "preproccessors": [
-                {
-                    "type": "JSONDecode",
-                    "config": {}
+            "preproccessors": [],
+            "protocol": {
+                "type": "TritiumCANEthernet",
+                "config": {
+                    "left_esc_base_address": "0x400",
+                    "right_esc_base_address": "0x400",
+                    "bmu_base_address": "0x600",
+                    "cmu_base_addresses": "0x00,0x03,0x06,0x09",
+                    "cmu_message_range": "3"
                 }
-
-            ],
-            "protocol": {}
+            }
         },
         {
             "type": "Websocket",
