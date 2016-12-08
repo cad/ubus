@@ -2,6 +2,7 @@ package outlet
 
 import "robotics.neu.edu.tr/ra27-telemetry/ra/middleware"
 
+// Outlet is a plugin that is responsible for taking out messages from the telemetry bus.
 type Outlet struct {
 	Config map[string]string
 	Type string
@@ -22,7 +23,7 @@ type Config struct {
 }
 type OutletConfig map[string]string
 
-// Outlet interface
+// BusDrainer is an interface that is usually implemented by Outlets.
 type BusDrainer interface {
 	Start()
 	Stop()

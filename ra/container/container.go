@@ -1,16 +1,18 @@
+// Package container contains high-level bits and pieces of the telemetry.
 package container
 
 import (
-//	"log"
 	"robotics.neu.edu.tr/ra27-telemetry/ra/bus"
 	"robotics.neu.edu.tr/ra27-telemetry/ra/inlet"
 	"robotics.neu.edu.tr/ra27-telemetry/ra/outlet"
 )
 
+// SetupContainer creates and returns a new telemetry I/O container from the passed Config and initializes it.
 func SetupContainer(c Config) *Container {
 	return loadContainerFromConfig(c)
 }
 
+// Start launches the I/O plugins that are attached to the given Container.
 func (cont *Container) Start() {
 	for _, outlet := range cont.Outlets {
 		outlet.Start()
@@ -23,6 +25,7 @@ func (cont *Container) Start() {
 	cont.Bus.Work()
 }
 
+// Stop kills the running I/O plugins that are attached to the given Container.
 func (cont *Container) Stop() {
 	for _, inlet := range cont.Inlets {
 		inlet.Stop()
